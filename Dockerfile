@@ -1,14 +1,20 @@
-# Use an official Nginx image as a parent image
-FROM nginx:latest
+# Use an official Python runtime as a parent image
+FROM python:3.8-slim
 
-# Remove default nginx website
-RUN rm -rf /usr/share/nginx/html/*
+# Set the working directory in the container
+WORKDIR /app
 
-# Copy index.html, style.css, bg.mp4, and letter_images folder into the container at /usr/share/nginx/html
-COPY index.html style.css bg.mp4 letter_images /usr/share/nginx/html/
+# Copy the current directory contents into the container at /app
+COPY . .
+
+# Install required dependencies
+RUN pip install fastapi pillow numpy tensorflow uvicorn python-multipart
+
+# Copy the letter_images folder into the container at /app/letter_images
+COPY letter_images /app/letter_images
 
 # Expose port 80
 EXPOSE 80
 
-# Command to start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Run main.py when the container launches
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
