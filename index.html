@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title style="color:#252a2a">Sign Language Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Sign Language Generation</h1>
+        <form id="sign_language_form" action="/generate_sign_language/" method="post">
+            <label for="text_input">Enter Text:</label>
+            <input type="text" id="text_input" name="text" required>
+            <button type="submit">Generate Sign Language</button>
+        </form>
+        <div id="image_display">
+            <img src="letter_images/A.png">
+            <img src="letter_images/A.PNG">
+            <!-- Images will be displayed here -->
+        </div>
+    </div>
+
+    <video autoplay muted loop id="bg_video">
+        <source src="bg.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+
+    <script>
+        // Function to handle form submission using AJAX
+        document.getElementById("sign_language_form").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+            var form_data = new FormData(this); // Create FormData object from form data
+
+            // Send AJAX POST request
+            fetch("/generate_sign_language/", {
+                method: "POST",
+                body: form_data
+            })
+            .then(response => response.json()) // Parse response as JSON
+            .then(data => {
+                // Display generated sign language images
+                displayImages(data);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+
+        // Function to display generated sign language images
+        function displayImages(imagePaths) {
+            var image_display = document.getElementById("image_display");
+            image_display.innerHTML = ""; // Clear previous images
+
+            // Append new images to the image_display div
+            imagePaths.forEach(imagePath => {
+                var img = document.createElement("img");
+                img.src = imagePath;
+                img.alt = "Generated Sign Language Image";
+                image_display.appendChild(img);
+            });
+        }
+    </script>
+</body>
+</html>
